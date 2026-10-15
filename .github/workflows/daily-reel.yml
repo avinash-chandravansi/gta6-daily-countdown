@@ -1,0 +1,25 @@
+name: Daily countdown reel
+
+on:
+  schedule:
+    - cron: "17 10 * * *" # ~6am US Eastern
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg fonts-inter
+          pip install -r requirements.txt
+      - name: Render reel
+        run: python3 make_reel.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gta6-countdown-reel
+          path: out/*.mp4
